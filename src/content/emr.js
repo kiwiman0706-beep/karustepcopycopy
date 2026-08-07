@@ -143,6 +143,74 @@
     }
   }
 
+  function isVisible(el) {
+    if (!el) return false;
+    if (el.getClientRects().length === 0) return false;
+    const rect = el.getBoundingClientRect();
+    return rect.width > 20 && rect.height > 10;
+  }
+
+  // ---- 主要カルテの主訴所見欄（組み込み対応） --------------------------
+  //
+  // ホスト名で対象サービスを判定しつつ、要素の存在でもフォールバックする。
+  // CLIUS / M3デジカル はどちらも主訴所見欄が TipTap(ProseMirror) の
+  // contenteditable なので、フォーカス + execCommand('insertText') で挿入できる。
+  const KNOWN_FIELDS = [
+    {
+      // CLIUS: https://web.clius.jp/
+      host: /(^|\.)clius\.jp$/i,
+      // 作成中カルテのSOAP(主訴所見)エディタ
+      selectors: [
+        'app-chart-soap .ProseMirror.wysiwyg-editor-content',
+        'app-chart-soap .ProseMirror',
+      ],
+    },
+    {
+      // M3デジカル: https://digikar.jp/
+      host: /(^|\.)digikar\.jp$/i,
+      selectors: [
+        '[data-diagnostic-impression-body] .ProseMirror.digikar-editor',
+        '[data-diagnostic-impression-body] .ProseMirror',
+        '.digikar-editor',
+      ],
+    },
+  ];
+
+  // ホストに関わらず試す汎用セレクタ(URLが変わった場合の保険)
+  const GENERIC_FIELD_SELECTORS = [
+    'app-chart-soap .ProseMirror',
+    '[data-diagnostic-impression-body] .ProseMirror',
+    '.digikar-editor',
+  ];
+
+  function firstEditableVisible(selectors) {
+    for (const sel of selectors) {
+      let list;
+      try {
+        list = document.querySelectorAll(sel);
+      } catch (_) {
+        continue;
+      }
+      for (const el of list) {
+        if (isEditable(el) && isVisible(el)) return el;
+      }
+    }
+    return null;
+  }
+
+  // 既知カルテの主訴所見欄を返す。
+  function resolveKnownField() {
+    const host = location.hostname;
+    for (const site of KNOWN_FIELDS) {
+      if (site.host.test(host)) {
+        const el = firstEditableVisible(site.selectors);
+        if (el) return el;
+      }
+    }
+    // ホスト未一致でも要素の存在で拾う
+    return firstEditableVisible(GENERIC_FIELD_SELECTORS);
+  }
+
   // ---- 対象欄の自動検出 -------------------------------------------------
 
   // ラベル文字列から対象欄を推定する。
@@ -254,15 +322,20 @@
       // 分割できなければ whole へフォールバック
     }
 
-    // 単一欄への挿入
-    // 1) 保存済み whole セレクタ
+    // 単一欄への挿入(優先順)
+    // 1) 保存済み whole セレクタ(ユーザーが明示登録した欄を最優先)
     let target = findTargetForSlot(targets, 'whole');
-    // 2) 現在フォーカス中の編集可能要素
+    // 2) 既知カルテ(CLIUS / M3デジカル)の主訴所見欄
+    if (!target) {
+      const el = resolveKnownField();
+      if (el) target = { el, via: 'known' };
+    }
+    // 3) 現在フォーカス中の編集可能要素
     if (!target) {
       const ae = document.activeElement;
       if (isEditable(ae)) target = { el: ae, via: 'active' };
     }
-    // 3) 自動検出
+    // 4) 汎用の自動検出
     if (!target) {
       const el = autoDetectField();
       if (el) target = { el, via: 'auto' };
@@ -275,7 +348,12 @@
       };
     }
     writeToElement(target.el, text, mode);
-    const viaLabel = { saved: '保存済みの欄', active: 'カーソル位置の欄', auto: '自動検出した欄' }[target.via];
+    const viaLabel = {
+      saved: '保存済みの欄',
+      known: '主訴所見欄',
+      active: 'カーソル位置の欄',
+      auto: '自動検出した欄',
+    }[target.via];
     return { ok: true, detail: `挿入しました(${viaLabel})。` };
   }
 
@@ -421,10 +499,11 @@
       return true; // 非同期応答
     }
     if (msg.type === 'KS_PROBE') {
-      const el = autoDetectField();
+      const el = resolveKnownField() || autoDetectField();
       sendResponse({
         ok: true,
         detected: el ? buildSelector(el) : null,
+        known: !!resolveKnownField(),
         editableCount: document.querySelectorAll('textarea,[contenteditable]').length,
         origin: location.origin,
       });

@@ -117,9 +117,26 @@ async function refreshTargetState() {
   const config = await getConfig();
   const t = (config.targets && config.targets[currentOrigin]) || {};
   const slots = ['whole', 'S', 'O', 'A', 'P'].filter((s) => t[s]);
-  $('targetState').textContent = slots.length
-    ? slots.map((s) => (s === 'whole' ? '全文' : s)).join(' / ')
-    : '未設定(自動検出)';
+  if (slots.length) {
+    $('targetState').textContent = slots
+      .map((s) => (s === 'whole' ? '全文' : s))
+      .join(' / ');
+    return;
+  }
+  // 保存済みが無い場合、既知カルテ(CLIUS/M3)の主訴所見欄を認識できるか確認
+  $('targetState').textContent = '確認中…';
+  try {
+    const res = await sendToTab(currentTab.id, { type: 'KS_PROBE' });
+    if (res && res.known) {
+      $('targetState').textContent = '主訴所見欄を自動認識';
+    } else if (res && res.detected) {
+      $('targetState').textContent = '未設定(自動検出)';
+    } else {
+      $('targetState').textContent = '未設定(カーソル位置へ)';
+    }
+  } catch (_) {
+    $('targetState').textContent = '未設定(自動検出)';
+  }
 }
 
 async function init() {
