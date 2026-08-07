@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="popup.css" />
+    <title>カルステップ連携</title>
+  </head>
+  <body>
+    <header class="head">
+      <img src="../icons/icon32.png" width="24" height="24" alt="" />
+      <h1>カルステップ → カルテ</h1>
+    </header>
+
+    <main class="body">
+      <button id="insert" class="btn primary">
+        <span class="lbl">カルテに挿入</span>
+        <span class="sub">主訴・所見欄へ</span>
+      </button>
+
+      <button id="copy" class="btn">
+        <span class="lbl">クリップボードにコピー</span>
+        <span class="sub">従来どおり</span>
+      </button>
+
+      <div id="status" class="status" role="status" aria-live="polite"></div>
+
+      <div class="targetbox">
+        <div class="targetline">
+          <span class="muted">このサイトの挿入先:</span>
+          <span id="targetState" class="targetstate">-</span>
+        </div>
+        <div id="pickSlots" class="row"></div>
+        <div class="row">
+          <button id="clear" class="mini ghost">このサイトの設定を解除</button>
+        </div>
+      </div>
+    </main>
+
+    <footer class="foot">
+      <span id="srcinfo" class="muted"></span>
+      <button id="opts" class="link">設定</button>
+    </footer>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

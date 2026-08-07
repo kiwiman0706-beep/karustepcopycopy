@@ -1,0 +1,56 @@
+{
+  "manifest_version": 3,
+  "name": "コピforカルステップ + カルテ連携 (CLIUS / M3デジカル)",
+  "version": "1.0.0",
+  "description": "カルステップの SOAP 結果(Googleスプレッドシートのセル)を、CLIUS や M3デジカルの主訴・所見欄へワンクリックで挿入します。従来どおりクリップボードへのコピーも可能です。",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "カルステップ → カルテ連携",
+    "default_popup": "src/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "src/options.html",
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "clipboardWrite",
+    "clipboardRead"
+  ],
+  "host_permissions": [
+    "https://docs.google.com/*"
+  ],
+  "optional_host_permissions": [
+    "https://*/*"
+  ],
+  "commands": {
+    "insert-to-emr": {
+      "suggested_key": {
+        "default": "Alt+Shift+K",
+        "mac": "Alt+Shift+K"
+      },
+      "description": "SOAP をカルテの主訴所見欄へ挿入"
+    },
+    "copy-to-clipboard": {
+      "suggested_key": {
+        "default": "Alt+Shift+C",
+        "mac": "Alt+Shift+C"
+      },
+      "description": "SOAP をクリップボードへコピー"
+    }
+  }
+}

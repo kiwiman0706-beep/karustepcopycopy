@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="options.css" />
+    <title>設定 — カルステップ連携</title>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <img src="../icons/icon48.png" width="36" height="36" alt="" />
+        <div>
+          <h1>カルステップ → カルテ連携 設定</h1>
+          <p class="muted">
+            カルステップが書き出す Google スプレッドシートの内容を、CLIUS / M3デジカル
+            の主訴・所見欄へ挿入します。
+          </p>
+        </div>
+      </header>
+
+      <section class="card">
+        <h2>1. 取得元</h2>
+        <div class="field">
+          <label><input type="radio" name="source" value="sheet" /> Googleスプレッドシートから取得（推奨）</label>
+          <label><input type="radio" name="source" value="clipboard" /> クリップボードから取得（カルステップがコピー済みの内容）</label>
+        </div>
+
+        <div id="sheetFields">
+          <div class="field">
+            <label for="sheetUrl">スプレッドシートの URL または ID</label>
+            <input type="text" id="sheetUrl" placeholder="https://docs.google.com/spreadsheets/d/......../edit#gid=0" />
+            <p class="hint">
+              シートは「共有 → リンクを知っている全員（閲覧者）」にしてください。
+              URL の <code>gid</code> でシート（タブ）を指定できます。
+            </p>
+          </div>
+          <div class="field narrow">
+            <label for="cell">取得するセル</label>
+            <input type="text" id="cell" value="H2" />
+            <p class="hint">既定は <code>H2</code>。</p>
+          </div>
+          <div class="field">
+            <button id="test" class="btn ghost">取得テスト</button>
+            <pre id="preview" class="preview" hidden></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>2. 挿入方法</h2>
+        <div class="field">
+          <label><input type="radio" name="insertMode" value="replace" /> 置き換え（欄の内容を上書き）</label>
+          <label><input type="radio" name="insertMode" value="append" /> 追記（欄の末尾に追加）</label>
+        </div>
+        <div class="field">
+          <label><input type="checkbox" id="splitSoap" /> SOAP を S / O / A / P に分けて別々の欄へ挿入する</label>
+          <p class="hint">
+            オンにすると、本文中の <code>S) … O) … A) … P) …</code> を解析し、
+            サイトごとに登録した S/O/A/P 各欄へ振り分けます（各欄の登録はポップアップから）。
+            解析できない場合は全文を1欄に挿入します。
+          </p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>3. 挿入先（サイト別）</h2>
+        <p class="hint">
+          挿入先の欄は、カルテ画面を開いた状態で拡張機能アイコン →「対象欄を選択」から登録します。
+          未登録の場合はカーソル位置の欄、または自動検出した欄に挿入します。
+        </p>
+        <div id="targets" class="targets"></div>
+      </section>
+
+      <section class="card">
+        <h2>使い方</h2>
+        <ol class="steps">
+          <li>カルステップで診療内容を録音し、SOAP をスプレッドシートに書き出す。</li>
+          <li>CLIUS / M3デジカル でカルテを開く。</li>
+          <li>拡張機能アイコンをクリック →「カルテに挿入」。（初回は「対象欄を選択」で欄を登録）</li>
+          <li>ショートカット: <kbd>Alt+Shift+K</kbd> 挿入 / <kbd>Alt+Shift+C</kbd> コピー</li>
+        </ol>
+        <p class="hint">
+          ショートカットは <code>chrome://extensions/shortcuts</code> で変更できます。
+        </p>
+      </section>
+
+      <div id="saved" class="saved" hidden>保存しました</div>
+    </div>
+    <script type="module" src="options.js"></script>
+  </body>
+</html>
