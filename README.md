@@ -21,7 +21,20 @@
 
 ---
 
-## インストール（開発者モードでの読み込み）
+## 配布（CBCM 強制インストール）
+
+Chrome Browser Cloud Management で自己ホスト配布するための一式を `dist/` に用意しています。
+
+| 項目 | 値 |
+|------|----|
+| 拡張機能ID | `fammeendkeciopghdknckdjmdbihnono` |
+| バージョン | 1.0.0 |
+| 更新URL / CRX | `dist/updates.xml` / `dist/karustep-clius-1.0.0.crx`（raw URLは下記ガイド参照） |
+
+設定手順・ポリシー値・バージョンアップ方法・署名鍵の扱いは
+**[docs/CBCM.md](docs/CBCM.md)** を参照してください。
+
+## インストール（開発者モードでの読み込み / 動作確認用）
 
 1. このリポジトリをダウンロード / clone する。
 2. Chrome で `chrome://extensions/` を開く。

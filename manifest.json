@@ -2,6 +2,7 @@
   "manifest_version": 3,
   "name": "コピforカルステップ + カルテ連携 (CLIUS / M3デジカル)",
   "version": "1.0.0",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4X+q8qmUnNs4HdwsmXcupOg/aR3ZpsM3HVPZ9ODof1X9VkzWcjqCJ+eI+rbsn48bzODg7YEyvpUq0QPmP0mF13NTIBHbVv6Y6Vz9KDN4Jir7DLszvVS/LUJ7MyTeNjxyHRN/WBBO+iIMdsQywnTvUjhe1carN2oLJZgQR0hzaqOAyGMjVu361ewecx35CZLReVfCcoviv9Se5YsnZQtGJWZWJ8I3FDbFNPkxPHcjUpc3miWjcjYUo3OkQY6GssTlJoYVBJvaRnRMmep/Btn9o1wYgnBKSm2PRS4QILi8Rp+v3jyVVqUHUyiXMlnrSnrwVgiHKxMXvbFlAVL7r8VK+QIDAQAB",
   "description": "カルステップの SOAP 結果(Googleスプレッドシートのセル)を、CLIUS や M3デジカルの主訴・所見欄へワンクリックで挿入します。従来どおりクリップボードへのコピーも可能です。",
   "icons": {
     "16": "icons/icon16.png",

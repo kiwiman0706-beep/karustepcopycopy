@@ -13,3 +13,5 @@ __pycache__/
 *.zip
 *.crx
 *.pem
+# ただし配布用のCRXはリポジトリで公開する(秘密鍵 *.pem は絶対に含めない)
+!dist/*.crx
